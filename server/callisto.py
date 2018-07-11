@@ -79,4 +79,4 @@ def test():
 if __name__ == "__main__":
     tpool = ThreadPoolExecutor(max_workers=5)
     t = tpool.submit(statusmonitor)
-    app.run()
+    app.run(port=9876, host='0.0.0.0')
