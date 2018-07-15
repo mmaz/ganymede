@@ -1,7 +1,10 @@
 import json as _json
 import datetime as _datetime
-import requests as _requests
 import random as _random
+import warnings as _warnings
+with _warnings.catch_warnings():
+    _warnings.simplefilter("ignore")
+    import requests as _requests
 
 HOST = '0.0.0.0'
 SUBMITTER = "YOUR NAME HERE"
