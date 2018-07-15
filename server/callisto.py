@@ -4,6 +4,8 @@ from multiprocessing import Queue
 from threading import Lock
 import datetime
 import time
+import argparse
+import yaml
 
 class JKeys:
     PROBLEMID = 'problemid'
@@ -20,11 +22,6 @@ app = Flask(__name__)
 lock = Lock()
 submissions = {} # problemid: (date, name, etc..)
 q = Queue()
-
-@app.route("/attempt", methods=['POST'])
-def attempt():
-    p = request.get_json()
-
 
 @app.route("/submit", methods=['POST'])
 def submit():
@@ -60,6 +57,14 @@ def status():
     s = printstatus()
     return "<pre>{}</pre>".format(s)
 
+@app.route('/collect')
+def collect():
+    with open(PATH + os.path.sep + 'result.yml', 'w') as yaml_file:
+        with lock:
+            sorted(submissions)
+            yaml.dump(submissions, yaml_file)
+
+
 def statusmonitor():
     while True:
         s = printstatus()
@@ -76,7 +81,17 @@ def test():
                          , 'meow2': p2
                          , 'meow3': p3}
 
+KEY = ''
+PATH = ''
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='CALLISTO')
+    parser.add_argument('key', metavar='K', type=str)
+    parser.add_argument('path', metavar='P', type=str)
+    args = parser.parse_args()
+    KEY = args.key
+    PATH = args.path
+
     tpool = ThreadPoolExecutor(max_workers=5)
     t = tpool.submit(statusmonitor)
     app.run(port=9876, host='0.0.0.0')
