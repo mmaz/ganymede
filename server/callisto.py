@@ -6,6 +6,7 @@ import datetime
 import time
 import argparse
 import yaml
+import os
 
 class JKeys:
     PROBLEMID = 'problemid'
@@ -59,10 +60,12 @@ def status():
 
 @app.route('/collect')
 def collect():
-    with open(PATH + os.path.sep + 'result.yml', 'w') as yaml_file:
-        with lock:
-            sorted(submissions)
-            yaml.dump(submissions, yaml_file)
+    if KEY == request.args.get('key', ''):
+        with open(PATH + os.path.sep + 'result.yml', 'w') as yaml_file:
+            with lock:
+                sorted(submissions)
+                yaml.dump(submissions, yaml_file)
+    return 'done'
 
 
 def statusmonitor():
